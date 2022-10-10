@@ -1,0 +1,46 @@
+name: fluid-k8s-apps
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: azure/setup-kubectl@v3
+
+      - name: Install AWSCLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install --update
+
+      - name: Configure AWS
+        run: |
+          aws configure --profile flow <<-EOF > /dev/null 2>&1
+          ${{ secrets.AWS_ACCESS_KEY_ID }}
+          ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ap-southeast-2
+          text
+          EOF
+
+      - name: Build Kube Manifest
+        run: |
+          mkdir -p artifacts/
+          kubectl version --client=true
+
+          kubectl kustomize ./argocd > artifacts/argocd.yaml
+          kubectl kustomize ./calico > artifacts/calico.yaml
+          cp self.yaml artifacts/
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ env.AWS_S3_BUCKET }}/${{ env.DEST_DIR }} --profile flow --acl public-read --follow-symlinks
+        env:
+          AWS_S3_BUCKET: fluid-artifacts
+          SOURCE_DIR: artifacts
+          DEST_DIR: fluid-kube
