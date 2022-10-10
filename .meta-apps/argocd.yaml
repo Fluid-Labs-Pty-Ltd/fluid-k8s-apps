@@ -13,9 +13,11 @@ spec:
   project: default
   source:
     path: argocd
-    repoURL: git@github.com:aseitnetworks/fluid-k8s-apps.git
+    repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
