@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.fluidhq.service: fluid-tunnel-a
+  name: fluid-tunnel-a
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      io.fluidhq.service: fluid-tunnel-a
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        io.fluidhq.service: fluid-tunnel-a
+      annotations:
+        seccomp.security.alpha.kubernetes.io/allowedProfileNames: "docker/default,runtime/default"
+        apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+        seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
+        apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: nebula
+          image: harbor.fluidhq.io/public/nebula:master
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            privileged: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_BROADCAST", "NET_ADMIN", "NET_RAW", "NET_BIND_SERVICE"]
+          resources:
+            requests:
+              memory: "386Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "750m"
+          ports:
+            - name: udp
+              containerPort: 4242
+          volumeMounts:
+            - mountPath: /dev/net/tun
+              name: dev-tun
+            - name: nebula-config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+            - name: nebula-secrets
+              mountPath: "/etc/nebula"
+              readOnly: true
+      initContainers:
+        - name: install
+          image: harbor.fluidhq.io/public/nebula-iptables:master
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            privileged: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_ADMIN"]
+          command:
+            - /app/install.sh
+          volumeMounts:
+            - name: nebula-install-script
+              mountPath: /app/install.sh
+              subPath: install.sh
+      restartPolicy: Always
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      volumes:
+        - name: dev-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+        - name: nebula-config
+          configMap:
+            name: fluid-tunnel-a-configmap
+            defaultMode: 0600
+        - name: nebula-secrets
+          secret:
+            secretName: fluid-tunnel-a-secrets
+        - name: nebula-install-script
+          configMap:
+            name: fluid-tunnel-install-script
+            defaultMode: 0555

@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - github.com/mongodb/mongodb-kubernetes-operator//config/default?submodules=false&ref=v0.7.6
+  - https://raw.githubusercontent.com/mongodb/mongodb-kubernetes-operator/v0.7.6/deploy/clusterwide/cluster_role.yaml
+  - mongo-clusterrolebinding.yaml
+  - mongo-namespace.yaml
+patchesStrategicMerge:
+  - mongo-deployment.yaml
+namespace: mongodb
