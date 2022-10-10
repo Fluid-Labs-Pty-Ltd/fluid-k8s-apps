@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    fluid: "true"
+    category: system
+  name: contour
+  namespace: argocd
+spec:
+  destination:
+    namespace: projectcontour
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: contour
+    repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
