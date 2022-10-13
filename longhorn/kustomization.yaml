@@ -2,9 +2,4 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/longhorn.yaml
-  # - limitrange.yaml
-  - longhorn-crypto-sealed.yaml
-  - storageclass-hdd.yaml
-  - storageclass-ssd-delete.yaml
-  - storageclass-ssd.yaml
 namespace: longhorn-system
