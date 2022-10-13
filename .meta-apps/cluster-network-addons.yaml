@@ -3,17 +3,17 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
-    display: "Application Manager"
+    display: "Network VPC Support"
     category: system
-  name: argocd
+  name: cluster-network-addons
   namespace: argocd
 spec:
   destination:
-    namespace: argocd
+    namespace: cluster-network-addons
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argocd
+    path: cluster-network-addons
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
   syncPolicy:

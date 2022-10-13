@@ -3,17 +3,17 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
-    display: "Application Manager"
+    display: "Virtualization"
     category: system
-  name: argocd
+  name: kubevirt
   namespace: argocd
 spec:
   destination:
-    namespace: argocd
+    namespace: kubevirt
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argocd
+    path: kubevirt
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
   syncPolicy:

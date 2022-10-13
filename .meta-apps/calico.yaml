@@ -3,22 +3,19 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
-    display: "Application Manager"
+    display: "Calico CNI"
     category: system
-  name: argocd
+  name: calico
   namespace: argocd
 spec:
   destination:
-    namespace: argocd
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argocd
+    path: calico
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true

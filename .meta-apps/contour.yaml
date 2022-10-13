@@ -3,6 +3,7 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
+    display: "Ingress Controller"
     category: system
   name: contour
   namespace: argocd

@@ -3,6 +3,7 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
+    display: "Load Balancer"
     category: system
   name: metallb
   namespace: argocd

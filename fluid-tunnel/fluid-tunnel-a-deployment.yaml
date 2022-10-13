@@ -84,7 +84,7 @@ spec:
             type: CharDevice
         - name: nebula-config
           configMap:
-            name: fluid-tunnel-a-configmap
+            name: fluid-tunnel-configmap
             defaultMode: 0600
         - name: nebula-secrets
           secret:

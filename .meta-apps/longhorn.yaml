@@ -3,17 +3,17 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
-    display: "Application Manager"
+    display: "Cluster Storage"
     category: system
-  name: argocd
+  name: longhorn
   namespace: argocd
 spec:
   destination:
-    namespace: argocd
+    namespace: longhorn-system
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argocd
+    path: longhorn
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
   syncPolicy:
