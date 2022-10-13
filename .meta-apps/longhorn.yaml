@@ -3,8 +3,9 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
-    display: "Cluster Storage"
     category: system
+  annotations:
+    fluidhq.io/display: "Cluster Storage"
   name: longhorn
   namespace: argocd
 spec:

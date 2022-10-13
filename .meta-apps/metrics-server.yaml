@@ -3,8 +3,9 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
-    display: "Cluster Metrics"
     category: system
+  annotations:
+    fluidhq.io/display: "Cluster Metrics"
   name: metrics-server
   namespace: argocd
 spec:

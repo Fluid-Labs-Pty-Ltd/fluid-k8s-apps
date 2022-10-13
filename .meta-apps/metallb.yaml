@@ -3,8 +3,9 @@ kind: Application
 metadata:
   labels:
     fluid: "true"
-    display: "Load Balancer"
     category: system
+  annotations:
+    fluidhq.io/display: "Load Balancer"
   name: metallb
   namespace: argocd
 spec:
