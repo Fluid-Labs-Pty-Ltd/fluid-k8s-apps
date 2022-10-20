@@ -6,14 +6,14 @@ metadata:
     category: system
   annotations:
     fluidhq.io/display: "false"
-  name: kube-proxy
+  name: kube-ingress
   namespace: argocd
 spec:
   destination:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: kube-proxy
+    path: kube-ingress
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
   syncPolicy:

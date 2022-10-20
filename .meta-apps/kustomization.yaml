@@ -7,7 +7,7 @@ resources:
   - contour.yaml
   - fluid-system.yaml
   - fluid-tunnel.yaml
-  - kube-proxy.yaml
+  - kube-ingress.yaml
   - kubevirt.yaml
   - longhorn.yaml
   - metallb.yaml
