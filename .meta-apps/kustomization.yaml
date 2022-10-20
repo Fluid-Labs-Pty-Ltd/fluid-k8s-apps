@@ -10,3 +10,5 @@ resources:
   - kubevirt.yaml
   - longhorn.yaml
   - metallb.yaml
+  - metrics-server.yaml
+  - redis-operator.yaml

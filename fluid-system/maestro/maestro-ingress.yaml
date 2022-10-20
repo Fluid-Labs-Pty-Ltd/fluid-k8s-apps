@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: maestro
+spec:
+  rules:
+    - host: maestro.cluster.local
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: fluid-maestro
+                port:
+                  number: 4000
