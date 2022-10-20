@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: maestro
+  namespace: fluid-system
 spec:
   rules:
     - host: maestro.cluster.local

@@ -4,5 +4,6 @@ resources:
   - maestro-clusterrolebinding.yaml
   - maestro-configmap.yaml
   - maestro-deployment.yaml
+  - maestro-ingress.yaml
   - maestro-service.yaml
   - maestro-serviceaccount.yaml
