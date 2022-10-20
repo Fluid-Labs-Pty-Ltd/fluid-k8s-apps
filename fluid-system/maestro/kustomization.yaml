@@ -7,3 +7,5 @@ resources:
   - maestro-ingress.yaml
   - maestro-service.yaml
   - maestro-serviceaccount.yaml
+  - maestro-vnc-clusterrolebinding.yaml
+  - maestro-vnc-serviceaccount.yaml
