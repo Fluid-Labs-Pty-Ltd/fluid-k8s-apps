@@ -5,23 +5,4 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-    - 10.5.20.0/24
-# ---
-# apiVersion: metallb.io/v1beta1
-# kind: IPAddressPool
-# metadata:
-#   name: default-v6
-#   namespace: metallb-system
-# spec:
-#   addresses:
-#     - 2403:5808:80c9:b1ed::/112
-# ---
-# apiVersion: metallb.io/v1beta1
-# kind: IPAddressPool
-# metadata:
-#   name: ipv6
-#   namespace: metallb-system
-# spec:
-#   addresses:
-#     - 2403:5808:80c9:c0de::/112
-#   autoAssign: false
+    - 100.67.0.0/24
