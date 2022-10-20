@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fluid-maestro
+  labels:
+    app: fluid-maestro
+spec:
+  serviceName: fluid-maestro
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fluid-maestro
+  template:
+    metadata:
+      labels:
+        app: fluid-maestro
+      annotations:
+        seccomp.security.alpha.kubernetes.io/allowedProfileNames: "docker/default,runtime/default"
+        apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+        seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
+        apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+    spec:
+      # runtimeClassName: kata-qemu
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+        runAsUser: 65535
+        runAsGroup: 65535
+        fsGroup: 65535
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: fluid-maestro
+          image: harbor.fluidhq.io/public/maestro:latest
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            privileged: false
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - containerPort: 4000
+              name: http
+            - containerPort: 4001
+              name: special
+            - containerPort: 50051
+              name: grpc
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 1024Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          startupProbe:
+            tcpSocket:
+              port: http
+            failureThreshold: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: conf
+              mountPath: /app/config/local.json
+              subPath: local.json
+              readOnly: true
+            - name: hostpath
+              mountPath: "/var/hostpath/"
+              readOnly: true
+            # - name: secrets
+            #   mountPath: "/var/secrets/"
+            #   readOnly: true
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      volumes:
+        - name: conf
+          configMap:
+            name: fluid-maestro
+            defaultMode: 0755
+        - hostPath:
+            path: /etc/fluid/maestro
+          name: hostpath
+        # - name: secrets
+        #   projected:
+        #     sources:
+        #       - secret:
+        #           name: kube-cluster-token
+        #           items:
+        #             - key: token
+        #               path: kube.installToken
+        #       - secret:
+        #           name: kube-sshkey
+        #           items:
+        #             - key: key
+        #               path: kube.sshKey
+      serviceAccountName: fluid-master
+      automountServiceAccountToken: true

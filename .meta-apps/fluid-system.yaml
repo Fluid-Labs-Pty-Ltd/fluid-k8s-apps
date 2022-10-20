@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    fluid: "true"
+    category: system
+  annotations:
+    fluidhq.io/display: "Fluid System"
+  name: fluid-system
+  namespace: argocd
+spec:
+  destination:
+    namespace: fluid-system
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: fluid-system
+    repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

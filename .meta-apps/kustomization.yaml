@@ -5,6 +5,8 @@ resources:
   - calico.yaml
   - cluster-network-addons.yaml
   - contour.yaml
+  - fluid-system.yaml
+  - fluid-tunnel.yaml
   - kubevirt.yaml
   - longhorn.yaml
   - metallb.yaml

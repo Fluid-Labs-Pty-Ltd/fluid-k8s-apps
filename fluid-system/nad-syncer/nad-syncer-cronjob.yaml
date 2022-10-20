@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sync-nad
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          containers:
+            - name: curl
+              image: buildpack-deps:curl
+              args:
+                - /bin/sh
+                - -ec
+                - 'curl -vvv -X POST -d "{}" -H "Content-Type: application/json" http://fluid-maestro.fluid-system.svc.cluster.local:4001/fluid/vms/nad-sync'
+          restartPolicy: Never

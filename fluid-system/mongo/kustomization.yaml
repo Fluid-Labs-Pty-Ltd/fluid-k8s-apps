@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - mongo-deployment.yaml
+  - mongo-service.yaml
+  # - https://raw.githubusercontent.com/mongodb/mongodb-kubernetes-operator/v0.7.5/config/rbac/role_binding_database.yaml
+  # - https://raw.githubusercontent.com/mongodb/mongodb-kubernetes-operator/v0.7.5/config/rbac/service_account_database.yaml
+  # - https://raw.githubusercontent.com/mongodb/mongodb-kubernetes-operator/v0.7.5/config/rbac/role_database.yaml

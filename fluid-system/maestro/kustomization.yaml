@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - maestro-clusterrolebinding.yaml
+  - maestro-configmap.yaml
+  - maestro-deployment.yaml
+  - maestro-service.yaml
+  - maestro-serviceaccount.yaml
