@@ -4,6 +4,7 @@ resources:
   - argocd.yaml
   - calico.yaml
   - cluster-network-addons.yaml
+  - cockroach-operator.yaml
   - contour.yaml
   - fluid-system.yaml
   - fluid-tunnel.yaml
@@ -12,4 +13,3 @@ resources:
   - longhorn.yaml
   - metallb.yaml
   - metrics-server.yaml
-  - redis-operator.yaml

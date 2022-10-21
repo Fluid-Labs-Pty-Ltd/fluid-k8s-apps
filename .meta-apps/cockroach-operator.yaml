@@ -5,16 +5,16 @@ metadata:
     fluid: "true"
     category: system
   annotations:
-    fluidhq.io/display: "Redis Operator"
-  name: redis-operator
+    fluidhq.io/display: "Nested Cluster Datastore Operator"
+  name: cockroach-operator
   namespace: argocd
 spec:
   destination:
-    namespace: redis-operator
+    namespace: cockroach-operator-system
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: redis-operator
+    path: cockroach-operator
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
   syncPolicy:
