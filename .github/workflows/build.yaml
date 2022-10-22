@@ -35,11 +35,12 @@ jobs:
 
           kubectl kustomize ./argocd > artifacts/argocd.yaml
           kubectl kustomize ./calico > artifacts/calico.yaml
+          kubectl kustomize ./longhorn > artifacts/longhorn.yaml
           cp self.yaml artifacts/
 
       - name: Sync to S3
         run: |
-          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ env.AWS_S3_BUCKET }}/${{ env.DEST_DIR }} --profile flow --acl public-read --follow-symlinks
+          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ env.AWS_S3_BUCKET }}/${{ env.DEST_DIR }}/${{ github.ref_name }} --profile flow --acl public-read --follow-symlinks
         env:
           AWS_S3_BUCKET: fluid-artifacts
           SOURCE_DIR: artifacts
