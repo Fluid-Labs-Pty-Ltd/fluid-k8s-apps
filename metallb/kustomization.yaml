@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - github.com/metallb/metallb//config/native?ref=v0.13.7
   - limitrange.yaml
-  - metallb-addresspools.yaml
   - metallb-l2advertisement.yaml

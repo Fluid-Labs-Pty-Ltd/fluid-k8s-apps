@@ -25,7 +25,7 @@ spec:
             # chosen from this range. Changing this value after installation will have
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
-              value: "172.42.0.0/16"
+              value: "100.65.0.0/16"
             - name: CALICO_IPV6POOL_CIDR
               value: "fd42::/48"
             - name: IP6

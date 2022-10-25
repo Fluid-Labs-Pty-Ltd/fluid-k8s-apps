@@ -47,7 +47,10 @@ data:
         "rejectUnauthorized": true
       },
       "oauth": {
-        "jwksUrl": ["https://staging-netapp-cloud-account.auth0.com/.well-known/jwks.json"]
+        "jwksUrl": ["https://cloud-test.fluidhq.io/api/fluid/.well_known/jwks.json"],
+        "options": {
+          "audience": "maestro"
+        }
       },
       "kube": {
           "rejectUnauthorized": false,
