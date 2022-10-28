@@ -2,7 +2,7 @@ name: fluid-k8s-apps
 
 on:
   push:
-    branches: [master]
+    branches: [master, production]
 
 jobs:
   build:
