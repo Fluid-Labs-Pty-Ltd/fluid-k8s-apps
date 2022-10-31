@@ -34,14 +34,8 @@ data:
         "Password": "newNet0ps",
         "auth_scheme_id": 1
       },
-      "shoelaces": {
-        "host": "10.42.0.1",
-        "port": 8080,
-        "protocol": "http",
-        "rejectUnauthorized": true
-      },
       "oauth": {
-        "jwksUrl": ["https://cloud-test.fluidhq.io/api/fluid/.well_known/jwks.json"],
+        "jwksUrl": ["https://cloud.fluidhq.io/api/fluid/.well_known/jwks.json"],
         "options": {
           "audience": "maestro"
         }
@@ -50,10 +44,6 @@ data:
           "rejectUnauthorized": false,
           "apiserverCaFile": "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
           "apiserverAuthFile": "/var/run/secrets/kubernetes.io/serviceaccount/token",
-          "regcred": {
-              "username": "fluid",
-              "password": "FLUID123$"
-          },
           "defaults": {
               "metallbProtocol": "layer2"
           }

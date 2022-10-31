@@ -6,7 +6,7 @@ metadata:
     app: fluid-maestro
 spec:
   serviceName: fluid-maestro
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: fluid-maestro
@@ -32,7 +32,7 @@ spec:
         - name: regcred
       containers:
         - name: fluid-maestro
-          image: harbor.fluidhq.io/public/maestro:latest
+          image: harbor.fluidhq.io/public/maestro:production
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
