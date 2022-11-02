@@ -4,6 +4,8 @@ metadata:
   labels:
     fluid: "true"
     category: system
+  annotations:
+    fluidhq.io/display: "false"
   name: meta-apps
   namespace: argocd
 spec:
