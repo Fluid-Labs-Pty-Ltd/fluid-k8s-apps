@@ -5,4 +5,3 @@ metadata:
 spec:
   multus: {}
   linuxBridge: {}
-  imagePullPolicy: Always
