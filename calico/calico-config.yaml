@@ -28,7 +28,7 @@ data:
           "ipam": {
               "type": "calico-ipam",
               "assign_ipv4": "true",
-              "assign_ipv6": "true"
+              "assign_ipv6": "false"
           },
           "container_settings": {
                "allow_ip_forwarding": true

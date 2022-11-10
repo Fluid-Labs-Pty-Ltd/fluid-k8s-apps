@@ -28,10 +28,10 @@ spec:
               value: "100.65.0.0/16"
             - name: CALICO_IPV6POOL_CIDR
               value: "fd42::/48"
-            - name: IP6
-              value: "autodetect"
-            - name: FELIX_IPV6SUPPORT
-              value: "true"
+            # - name: IP6
+            #   value: "autodetect"
+            # - name: FELIX_IPV6SUPPORT
+            #   value: "true"
             - name: CALICO_IPV6POOL_NAT_OUTGOING
               value: "true"
             - name: CALICO_IPV4POOL_NAT_OUTGOING
