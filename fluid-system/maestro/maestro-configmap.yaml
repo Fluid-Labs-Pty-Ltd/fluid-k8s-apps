@@ -46,6 +46,7 @@ data:
           "apiserverAuthFile": "/var/run/secrets/kubernetes.io/serviceaccount/token",
           "defaults": {
               "metallbProtocol": "layer2"
-          }
+          },
+          "applicationBranch": "production"
       }
     }
