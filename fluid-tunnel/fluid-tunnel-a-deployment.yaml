@@ -11,7 +11,6 @@ spec:
   selector:
     matchLabels:
       io.fluidhq.service: fluid-tunnel-a
-      io.fluidhq.spread: fluid-tunnel
   strategy:
     type: RollingUpdate
   template:
