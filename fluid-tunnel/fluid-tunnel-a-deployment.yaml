@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     io.fluidhq.service: fluid-tunnel-a
+    io.fluidhq.spread: fluid-tunnel
   name: fluid-tunnel-a
 spec:
   replicas: 1
@@ -10,18 +11,27 @@ spec:
   selector:
     matchLabels:
       io.fluidhq.service: fluid-tunnel-a
+      io.fluidhq.spread: fluid-tunnel
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
         io.fluidhq.service: fluid-tunnel-a
+        io.fluidhq.spread: fluid-tunnel
       annotations:
         seccomp.security.alpha.kubernetes.io/allowedProfileNames: "docker/default,runtime/default"
         apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
         seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
         apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
     spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              io.fluidhq.spread: fluid-tunnel
       automountServiceAccountToken: false
       securityContext:
         seccompProfile:
