@@ -16,7 +16,7 @@ spec:
     path: calico
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: HEAD
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+  # syncPolicy:
+  #   automated:
+  #     prune: true
+  #     selfHeal: true
