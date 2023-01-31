@@ -40,8 +40,8 @@ jobs:
           kubectl kustomize $HOME/cni/calico > $HOME/artifacts/calico.yaml
           
           cp $HOME/self.yaml $HOME/artifacts/
-          cp $HOME/.meta-apps/calico.yaml $HOME/artifacts/
-          cp $HOME/.meta-apps/cilium.yaml $HOME/artifacts/
+          cp $HOME/.meta-apps/calico.yaml $HOME/artifacts/calico-app.yaml
+          cp $HOME/.meta-apps/cilium.yaml $HOME/artifacts/cilium-app.yaml
 
           cd $HOME/cni/cilium/
           helm dependency build
