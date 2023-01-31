@@ -35,20 +35,21 @@ jobs:
           mkdir -p $HOME/artifacts/
           kubectl version --client=true
 
+          kubectl kustomize $HOME/.argo-apps > $HOME/artifacts/argo-apps.yaml
           kubectl kustomize $HOME/argocd > $HOME/artifacts/argocd.yaml
           kubectl kustomize $HOME/longhorn > $HOME/artifacts/longhorn.yaml
           kubectl kustomize $HOME/cni/calico > $HOME/artifacts/calico.yaml
           
-          mkdir -p $HOME/artifacts/meta-apps
+          mkdir -p $HOME/artifacts/apps
           cp $HOME/self.yaml $HOME/artifacts/
-          cp $HOME/.meta-apps/*.yaml $HOME/artifacts/meta-apps/
+          cp $HOME/.argo-apps/*.yaml $HOME/artifacts/apps/
 
           cd $HOME/cni/cilium/
           helm dependency build
           helm template . -f values.yaml -n kube-system > $HOME/artifacts/cilium.yaml
 
           find $HOME/artifacts -type f -exec sed -i 's/BRANCHREPLACEMENT/${{ github.ref_name }}/g' {} +
-          find $HOME/artifacts/meta-apps -type f -exec sed -i 's/BRANCHREPLACEMENT/${{ github.ref_name }}/g' {} +
+          find $HOME/artifacts/apps -type f -exec sed -i 's/BRANCHREPLACEMENT/${{ github.ref_name }}/g' {} +
 
       - name: Sync to S3
         run: |
