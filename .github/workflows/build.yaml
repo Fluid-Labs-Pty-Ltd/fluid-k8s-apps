@@ -41,7 +41,6 @@ jobs:
           kubectl kustomize $HOME/cni/calico > $HOME/artifacts/calico.yaml
           
           mkdir -p $HOME/artifacts/apps
-          cp $HOME/self.yaml $HOME/artifacts/
           cp $HOME/.argo-apps/*.yaml $HOME/artifacts/apps/
 
           cd $HOME/cni/cilium/
