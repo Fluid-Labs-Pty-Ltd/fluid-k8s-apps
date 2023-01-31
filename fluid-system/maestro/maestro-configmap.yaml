@@ -34,12 +34,6 @@ data:
         "Password": "newNet0ps",
         "auth_scheme_id": 1
       },
-      "fluidCloud": {
-        "host": "cloud-test.fluid.aseit.com.au",
-        "port": 8444,
-        "rejectUnauthorized": false,
-        "enabled": true
-      },
       "shoelaces": {
         "host": "10.42.0.1",
         "port": 8080,

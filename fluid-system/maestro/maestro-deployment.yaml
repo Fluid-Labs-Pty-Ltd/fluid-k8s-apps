@@ -74,12 +74,6 @@ spec:
               mountPath: /app/config/local.json
               subPath: local.json
               readOnly: true
-            - name: hostpath
-              mountPath: "/var/hostpath/"
-              readOnly: true
-            # - name: secrets
-            #   mountPath: "/var/secrets/"
-            #   readOnly: true
       hostIPC: false
       hostNetwork: false
       hostPID: false
@@ -88,21 +82,5 @@ spec:
           configMap:
             name: fluid-maestro
             defaultMode: 0755
-        - hostPath:
-            path: /etc/fluid/maestro
-          name: hostpath
-        # - name: secrets
-        #   projected:
-        #     sources:
-        #       - secret:
-        #           name: kube-cluster-token
-        #           items:
-        #             - key: token
-        #               path: kube.installToken
-        #       - secret:
-        #           name: kube-sshkey
-        #           items:
-        #             - key: key
-        #               path: kube.sshKey
       serviceAccountName: fluid-master
       automountServiceAccountToken: true

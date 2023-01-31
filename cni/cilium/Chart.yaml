@@ -1,0 +1,11 @@
+apiVersion: v2
+name: Cilium
+description: A Helm chart for Cilium
+type: application
+version: 1.12.5
+appVersion: "1.12.5"
+
+dependencies:
+  - name: cilium
+    version: 1.12.5
+    repository: https://helm.cilium.io/

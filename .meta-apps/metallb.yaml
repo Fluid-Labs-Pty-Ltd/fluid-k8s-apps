@@ -16,7 +16,7 @@ spec:
   source:
     path: metallb
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
-    targetRevision: HEAD
+    targetRevision: BRANCHREPLACEMENT
   syncPolicy:
     automated:
       prune: true

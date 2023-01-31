@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-helm@v3
 
       - name: Install AWSCLI
         run: |
@@ -30,13 +31,23 @@ jobs:
 
       - name: Build Kube Manifest
         run: |
-          mkdir -p artifacts/
+          HOME=`pwd`
+          mkdir -p $HOME/artifacts/
           kubectl version --client=true
 
-          kubectl kustomize ./argocd > artifacts/argocd.yaml
-          kubectl kustomize ./calico > artifacts/calico.yaml
-          kubectl kustomize ./longhorn > artifacts/longhorn.yaml
-          cp self.yaml artifacts/
+          kubectl kustomize $HOME/argocd > $HOME/artifacts/argocd.yaml
+          kubectl kustomize $HOME/longhorn > $HOME/artifacts/longhorn.yaml
+          kubectl kustomize $HOME/cni/calico > $HOME/artifacts/calico.yaml
+          
+          cp $HOME/self.yaml $HOME/artifacts/
+          cp $HOME/.meta-apps/calico.yaml $HOME/artifacts/
+          cp $HOME/.meta-apps/cilium.yaml $HOME/artifacts/
+
+          cd $HOME/cni/cilium/
+          helm dependency build
+          helm template . -f values.yaml -n kube-system > $HOME/artifacts/cilium.yaml
+
+          find $HOME/artifacts -type f -exec sed -i 's/BRANCHREPLACEMENT/${{ github.ref_name }}/g' {} +
 
       - name: Sync to S3
         run: |
