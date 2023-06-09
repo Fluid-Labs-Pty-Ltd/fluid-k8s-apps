@@ -3,6 +3,4 @@ kind: Kustomization
 resources:
   - https://github.com/kubevirt/kubevirt/releases/download/v0.59.0/kubevirt-operator.yaml
   - https://github.com/kubevirt/kubevirt/releases/download/v0.59.0/kubevirt-cr.yaml
-  - https://github.com/kubevirt/containerized-data-importer/releases/download/v1.56.0/cdi-operator.yaml
-  - https://github.com/kubevirt/containerized-data-importer/releases/download/v1.56.0/cdi-cr.yaml
   - fluidhq-vnc-clusterrole.yaml
