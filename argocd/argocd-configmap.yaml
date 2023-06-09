@@ -7,3 +7,16 @@ metadata:
   name: argocd-cm
 data:
   accounts.fluid: login
+  # resource.customizations.ignoreResourceUpdates.all: |
+  #   jsonPointers:
+  #     - /status
+  resource.compareoptions: |
+    ignoreResourceStatusField: all
+  resource.customizations.ignoreDifferences.autoscaling_HorizontalPodAutoscaler: |
+    jsonPointers:
+    - /metadata
+    - /status
+  resource.customizations.ignoreDifferences.keda.sh_ScaledObject: |
+    jsonPointers:
+    - /metadata
+    - /status
