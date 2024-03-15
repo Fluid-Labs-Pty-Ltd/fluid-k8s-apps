@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://github.com/kubevirt/cluster-network-addons-operator/releases/download/v0.85.2/namespace.yaml
-  - https://github.com/kubevirt/cluster-network-addons-operator/releases/download/v0.85.2/network-addons-config.crd.yaml
-  - https://github.com/kubevirt/cluster-network-addons-operator/releases/download/v0.85.2/operator.yaml
+  - https://github.com/kubevirt/cluster-network-addons-operator/releases/download/v0.91.0/namespace.yaml
+  - https://github.com/kubevirt/cluster-network-addons-operator/releases/download/v0.91.0/network-addons-config.crd.yaml
+  - https://github.com/kubevirt/cluster-network-addons-operator/releases/download/v0.91.0/operator.yaml
   - network-addon-config.yaml
