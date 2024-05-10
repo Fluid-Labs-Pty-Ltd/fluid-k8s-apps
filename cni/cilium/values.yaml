@@ -1,4 +1,6 @@
 cilium:
+  MTU: "1500"
   ipam:
     mode: kubernetes
-  mtu: 1500
+  cni:
+    exclusive: false
