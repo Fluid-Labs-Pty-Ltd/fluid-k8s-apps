@@ -1,4 +1,5 @@
 cilium:
+  mtu: "1500"
   MTU: "1500"
   ipam:
     mode: kubernetes
