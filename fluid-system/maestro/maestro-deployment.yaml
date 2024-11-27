@@ -32,7 +32,7 @@ spec:
         - name: regcred
       containers:
         - name: fluid-maestro
-          image: harbor.fluidhq.io/public/maestro:v2024.04.0
+          image: harbor.fluidhq.io/public/maestro:latest
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
