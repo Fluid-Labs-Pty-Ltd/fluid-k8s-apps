@@ -35,7 +35,7 @@ data:
         "auth_scheme_id": 1
       },
       "oauth": {
-        "jwksUrl": ["https://cloud.fluidhq.io/api/fluid/.well_known/jwks.json"],
+        "jwksUrl": ["https://cloud-dev.fluidhq.io/api/fluid/.well_known/jwks.json"],
         "options": {
           "audience": "maestro"
         }

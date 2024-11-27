@@ -2,7 +2,7 @@ name: fluid-k8s-apps
 
 on:
   push:
-    branches: [master, production]
+    branches: [master, production, dev]
 
 jobs:
   build:
@@ -39,7 +39,7 @@ jobs:
           kubectl kustomize $HOME/argocd > $HOME/artifacts/argocd.yaml
           kubectl kustomize $HOME/longhorn > $HOME/artifacts/longhorn.yaml
           kubectl kustomize $HOME/cni/calico > $HOME/artifacts/calico.yaml
-          
+
           mkdir -p $HOME/artifacts/apps
           cp $HOME/.argo-apps/*.yaml $HOME/artifacts/apps/
 
