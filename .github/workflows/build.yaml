@@ -14,20 +14,33 @@ jobs:
       - uses: azure/setup-kubectl@v3
       - uses: azure/setup-helm@v3
 
-      - name: Install AWSCLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          sudo ./aws/install --update
 
-      - name: Configure AWS
-        run: |
-          aws configure --profile flow <<-EOF > /dev/null 2>&1
-          ${{ secrets.AWS_ACCESS_KEY_ID }}
-          ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          ap-southeast-2
-          text
-          EOF
+      - name: 'authenticate GCP'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{secrets.GCP_PROJECT_NAME}}
+          workload_identity_provider: ${{secrets.GCP_WORKLOAD_PROVIDER}}
+      
+      - name: 'Set Up gcloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'   
+
+
+      # - name: Install AWSCLI
+      #   run: |
+      #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #     unzip -q awscliv2.zip
+      #     sudo ./aws/install --update
+
+      # - name: Configure AWS
+      #   run: |
+      #     aws configure --profile flow <<-EOF > /dev/null 2>&1
+      #     ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     ap-southeast-2
+      #     text
+      #     EOF
 
       - name: Build Kube Manifest
         run: |
@@ -52,8 +65,16 @@ jobs:
 
       - name: Sync to S3
         run: |
-          aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ env.AWS_S3_BUCKET }}/${{ env.DEST_DIR }}/${{ github.ref_name }} --profile flow --acl public-read --follow-symlinks
+          gcloud storage rsync ${{ env.SOURCE_DIR }} gs://${{ env.GCS_BUCKET }}/${{ env.DEST_DIR }}/${{ github.ref_name }} --recursive --no-ignore-symlinks
         env:
-          AWS_S3_BUCKET: fluid-artifacts
+          GCS_BUCKET: artifacts.fluidhq.io
           SOURCE_DIR: artifacts
           DEST_DIR: fluid-kube
+
+      # - name: Sync to S3
+      #   run: |
+      #     aws s3 sync ${{ env.SOURCE_DIR }} s3://${{ env.AWS_S3_BUCKET }}/${{ env.DEST_DIR }}/${{ github.ref_name }} --profile flow --acl public-read --follow-symlinks
+      #   env:
+      #     AWS_S3_BUCKET: fluid-artifacts
+      #     SOURCE_DIR: artifacts
+      #     DEST_DIR: fluid-kube
