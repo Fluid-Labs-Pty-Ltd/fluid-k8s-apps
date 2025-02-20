@@ -15,7 +15,7 @@ spec:
   project: default
   source:
     path: contour
-    repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
+    repoURL: "https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps"
     targetRevision: BRANCHREPLACEMENT
   syncPolicy:
     automated:
