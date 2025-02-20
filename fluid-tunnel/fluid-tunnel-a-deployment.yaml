@@ -37,7 +37,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: nebula
-          image: harbor.fluidhq.io/public/nebula:master
+          image: harborv2.fluidhq.io/public/nebula:v1.8.2
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
@@ -67,7 +67,7 @@ spec:
               readOnly: true
       initContainers:
         - name: install
-          image: harbor.fluidhq.io/public/nebula-iptables:master
+          image: harborv2.fluidhq.io/public/nebula-iptables:main
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false

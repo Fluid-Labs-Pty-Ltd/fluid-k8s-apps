@@ -18,7 +18,7 @@ spec:
       valueFiles:
       - values.yaml
     path: cni/cilium
-    repoURL: https://github.com/aseitnetworks/fluid-k8s-apps.git
+    repoURL: https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps.git
     targetRevision: BRANCHREPLACEMENT
   syncPolicy:
     automated:
