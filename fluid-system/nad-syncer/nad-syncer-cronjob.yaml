@@ -18,5 +18,5 @@ spec:
               args:
                 - /bin/sh
                 - -ec
-                - 'curl -vvv -X POST -d "{}" -H "Content-Type: application/json" http://fluid-maestro.fluid-system.svc.cluster.local:4001/fluid/vms/nad-sync'
+                - 'curl -vvv -X POST -d "{}" -H "Content-Type: application/json" http://fluid-maestro.fluid-system.svc.cluster.local:4000/fluid/vms/nad-sync'
           restartPolicy: Never
