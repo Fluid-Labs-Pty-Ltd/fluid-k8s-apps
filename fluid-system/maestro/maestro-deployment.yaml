@@ -28,11 +28,9 @@ spec:
         runAsUser: 65535
         runAsGroup: 65535
         fsGroup: 65535
-      imagePullSecrets:
-        - name: regcred
       containers:
         - name: fluid-maestro
-          image: harborv2.fluidhq.io/public/maestro:ddc94142d1ded308fafb82084a767d4fed17db6c
+          image: harborv2.fluidhq.io/public/maestro:9b6f90c
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
