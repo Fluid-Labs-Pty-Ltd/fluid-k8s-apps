@@ -8,17 +8,17 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: 'read'
       id-token: 'write'
-    
+
     steps:
       - uses: actions/checkout@v3
 
       - uses: azure/setup-kubectl@v3
       - uses: azure/setup-helm@v3
-      
+
       - name: 'authenticate GCP'
         uses: 'google-github-actions/auth@v2'
         with:
@@ -28,9 +28,7 @@ jobs:
       - name: 'Set Up gcloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
         with:
-          version: '>= 363.0.0'   
-
-
+          version: '>= 363.0.0'
 
       - name: Build Kube Manifest
         run: |
@@ -42,13 +40,15 @@ jobs:
           kubectl kustomize $HOME/argocd > $HOME/artifacts/argocd.yaml
           kubectl kustomize $HOME/longhorn > $HOME/artifacts/longhorn.yaml
           kubectl kustomize $HOME/cni/calico > $HOME/artifacts/calico.yaml
+          kubectl kustomize $HOME/cni/cilium > $HOME/artifacts/cilium.yaml
 
           mkdir -p $HOME/artifacts/apps
           cp $HOME/.argo-apps/*.yaml $HOME/artifacts/apps/
 
-          cd $HOME/cni/cilium/
-          helm dependency build
-          helm template . -f values.yaml -n kube-system > $HOME/artifacts/cilium.yaml
+          # cd $HOME/cni/cilium/
+          # helm dependency build
+          # helm template . -f values.yaml -n kube-system > $HOME/artifacts/cilium.yaml
+
 
           find $HOME/artifacts -type f -exec sed -i 's/BRANCHREPLACEMENT/${{ github.ref_name }}/g' {} +
           find $HOME/artifacts/apps -type f -exec sed -i 's/BRANCHREPLACEMENT/${{ github.ref_name }}/g' {} +

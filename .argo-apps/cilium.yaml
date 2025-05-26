@@ -14,9 +14,6 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    helm:
-      valueFiles:
-      - values.yaml
     path: cni/cilium
     repoURL: https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps.git
     targetRevision: BRANCHREPLACEMENT
