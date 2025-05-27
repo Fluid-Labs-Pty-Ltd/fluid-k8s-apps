@@ -7,3 +7,10 @@ metadata:
   name: argocd-cm
 data:
   accounts.fluid: login
+  resource.exlusions: |
+    - apiGroups:
+        - cilium.io
+      kinds:
+        - CiliumIndentity
+      clusters:
+        - "*"
