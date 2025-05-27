@@ -13,7 +13,7 @@ helm repo add cilium https://helm.cilium.io
 # Choose Desired Version
 
 ```
-export cilium_version=x.x.x
+export cilium_version=1.12.19
 
 ```
 
