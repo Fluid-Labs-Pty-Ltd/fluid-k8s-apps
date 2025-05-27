@@ -12,3 +12,7 @@ operator:
       effect: NoSchedule
       operator: Exists
 MTU: 1500
+hubble:
+  tls:
+    auto:
+      method: cronJob
