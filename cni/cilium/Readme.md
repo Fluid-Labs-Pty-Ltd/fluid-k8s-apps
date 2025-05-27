@@ -28,5 +28,5 @@ helm show values cilium/cilium --version $cilium_version  | tee default-values-$
 ### Generate Manifest
 
 ```
-helm template cilium/cilium --version $cilium_version --values values-helm-direct.yaml --include-crds | tee cilium.yaml
+helm template cilium/cilium --version $cilium_version --values values-helm-direct.yaml --include-crds --namespace kube-system | tee cilium.yaml
 ```
