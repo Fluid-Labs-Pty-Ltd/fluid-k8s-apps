@@ -17,6 +17,7 @@ spec:
     repoURL: "https://github.com/aseitnetworks/fluid-k8s-apps"
     targetRevision: BRANCHREPLACEMENT
   syncPolicy:
+    preserveResourcesOnDeletion: "true"
     automated:
       prune: true
       selfHeal: true
