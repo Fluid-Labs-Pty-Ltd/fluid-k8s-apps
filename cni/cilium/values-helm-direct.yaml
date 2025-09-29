@@ -1,3 +1,5 @@
+cni:
+  exclusive: "false"
 ipam:
   mode: kubernetes
 operator:
