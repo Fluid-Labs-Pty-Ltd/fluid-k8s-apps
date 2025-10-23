@@ -14,4 +14,4 @@ cilium:
       - key: node-role.kubernetes.io/control-plane
         effect: NoSchedule
         operator: Exists
-
+  extraArgs: ["--mtu=1500"]
