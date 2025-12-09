@@ -30,7 +30,7 @@ spec:
         fsGroup: 65535
       containers:
         - name: fluid-maestro
-          image: harborv2.fluidhq.io/public/maestro:014598b
+          image: harborv2.fluidhq.io/public/maestro:3c6d22b
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
