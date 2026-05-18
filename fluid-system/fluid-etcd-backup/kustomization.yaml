@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - fluid-etcd-backup-crd.yaml
   - fluid-etcd-backup-serviceaccount.yaml
+  - fluid-etcd-upload-job-serviceaccount.yaml
   - fluid-etcd-backup-deployment.yaml
   - fluid-etcd-backup-clusterrole.yaml
   - fluid-etcd-backup-clusterrolebinding.yaml
