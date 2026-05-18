@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fluid-etcd-backup-operator-snapshots
+subjects:
+  - kind: ServiceAccount
+    name: fluid-etcd-backup-operator
+    namespace: fluid-system
+roleRef:
+  kind: ClusterRole
+  name: fluid-etcd-backup-operator-snapshots
+  apiGroup: rbac.authorization.k8s.io
