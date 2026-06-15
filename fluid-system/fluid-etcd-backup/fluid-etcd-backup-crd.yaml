@@ -5,15 +5,12 @@ metadata:
 spec:
   group: fluidhq.io
   names:
-    categories: []
     kind: EtcdOffsiteRequest
     plural: etcdoffsiterequests
-    shortNames: []
     singular: etcdoffsiterequest
   scope: Namespaced
   versions:
-  - additionalPrinterColumns: []
-    name: v1alpha1
+  - name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Auto-generated derived type for EtcdOffsiteRequestSpec via `CustomResource`
