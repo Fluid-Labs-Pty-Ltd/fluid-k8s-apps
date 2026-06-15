@@ -44,12 +44,19 @@ spec:
           status:
             nullable: true
             properties:
+              attempts:
+                default: 0
+                description: 1-based attempt number of the latest upload Job spawned for this request. 0 means no Job has been created yet; the first creation sets it to 1, each retry increments it. Defaulted so CRs written before this field existed deserialize cleanly as 0.
+                format: uint32
+                minimum: 0.0
+                type: integer
               phase:
                 enum:
                 - Pending
                 - Uploading
                 - Complete
                 - Failed
+                - RetryPending
                 type: string
             required:
             - phase
