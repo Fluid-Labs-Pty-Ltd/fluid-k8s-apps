@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - fluid-sluice-serviceaccount.yaml
+  - fluid-sluice-bootstrap-secret.yaml
+  - fluid-sluice-role.yaml
+  - fluid-sluice-rolebinding.yaml
+  - fluid-sluice-deployment.yaml
+  - fluid-sluice-service.yaml
