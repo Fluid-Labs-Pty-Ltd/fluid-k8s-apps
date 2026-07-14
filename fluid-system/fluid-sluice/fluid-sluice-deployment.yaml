@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluid-sluice
+  labels:
+    app: fluid-sluice
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: fluid-sluice
+  template:
+    metadata:
+      labels:
+        app: fluid-sluice
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+      containers:
+        - name: fluid-sluice
+          image: australia-southeast2-docker.pkg.dev/fluidhq/public/fluid-sluice:dev
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "8448"
+            - name: UPSTREAM_BASE_URL
+              value: "http://fluid-maestro.fluid-system.svc:4000"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            privileged: false
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - containerPort: 8448
+              name: https
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            failureThreshold: 30
+            periodSeconds: 5
+          volumeMounts:
+            - name: sa-token
+              mountPath: /var/run/secrets/tokens
+              readOnly: true
+            - name: bootstrap
+              mountPath: /etc/sluice-bootstrap
+              readOnly: true
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      serviceAccountName: fluid-sluice
+      automountServiceAccountToken: false
+      volumes:
+        - name: sa-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: fluid-sluice
+                  audience: fluid-sluice
+                  expirationSeconds: 3600
+        - name: bootstrap
+          secret:
+            secretName: sluice-bootstrap
+            items:
+              - key: passphrase-hash
+                path: passphrase-hash

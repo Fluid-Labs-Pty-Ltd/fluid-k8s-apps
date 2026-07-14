@@ -24,3 +24,14 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  # The sluice-bootstrap Secret ships a locked random default but is rotated in place by an admin
+  # via maestro. Ignore its data so selfHeal does not revert
+  # the live passphrase back to the git default.
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: sluice-bootstrap
+      namespace: fluid-system
+      jsonPointers:
+        - /data
