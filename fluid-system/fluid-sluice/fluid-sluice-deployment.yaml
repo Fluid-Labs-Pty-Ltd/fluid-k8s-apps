@@ -32,6 +32,8 @@ spec:
               value: "8448"
             - name: UPSTREAM_BASE_URL
               value: "http://fluid-maestro.fluid-system.svc:4000"
+            - name: KUBE_CA_PATH
+              value: /var/run/secrets/tokens/ca.crt
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -89,6 +91,11 @@ spec:
                   path: fluid-sluice
                   audience: fluid-sluice
                   expirationSeconds: 3600
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
         - name: bootstrap
           secret:
             secretName: sluice-bootstrap
