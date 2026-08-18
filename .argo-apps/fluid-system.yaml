@@ -23,3 +23,17 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  # The sluice-bootstrap Secret ships a locked random default but is rotated in place by an admin
+  # via maestro. Ignore its data so selfHeal does not revert the live passphrase back to the git
+  # default. The manifest ships the value via stringData, so /stringData must be ignored too —
+  # otherwise selfHeal re-applies the git default through stringData and overwrites /data.
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: sluice-bootstrap
+      namespace: fluid-system
+      jsonPointers:
+        - /data
+        - /stringData

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluid-sluice
+spec:
+  type: NodePort
+  selector:
+    app: fluid-sluice
+  ports:
+    - protocol: TCP
+      name: https
+      port: 8448
+      targetPort: https
+      nodePort: 30448
