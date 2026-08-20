@@ -30,7 +30,8 @@ spec:
         fsGroup: 65535
       containers:
         - name: fluid-maestro
-          image: australia-southeast2-docker.pkg.dev/fluidhq/public-dev/maestro:latest
+          image: australia-southeast2-docker.pkg.dev/fluidhq/public/maestro:v2026.7.1
+          #image: australia-southeast2-docker.pkg.dev/fluidhq/public-dev/maestro:latest
           imagePullPolicy: Always
           env:
             - name: LOG_LEVEL

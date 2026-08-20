@@ -25,7 +25,8 @@ spec:
         fsGroup: 65532
       containers:
         - name: fluid-sluice
-          image: australia-southeast2-docker.pkg.dev/fluidhq/public-dev/fluid-sluice:latest
+          # image: australia-southeast2-docker.pkg.dev/fluidhq/public-dev/fluid-sluice:latest
+          image: australia-southeast2-docker.pkg.dev/fluidhq/public/fluid-sluice:v2026.7.1
           imagePullPolicy: Always
           env:
             - name: PORT
