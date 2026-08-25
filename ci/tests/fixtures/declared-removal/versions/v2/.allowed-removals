@@ -1,0 +1,13 @@
+# Resources this version deliberately does not render, one identity per line as
+# apiVersion|kind|namespace|name  (namespace "-" when cluster-scoped or unset).
+#
+# A line here is the record of an orphan review: the resource stays behind on any
+# cluster already running it, so state what happens to it — and say so
+# explicitly for validating and mutating webhooks, which fail closed and will block
+# every API operation on their resource type cluster-wide if their backing service
+# goes away.
+#
+# Reviewed-by / date / what happens to the orphan:
+#   beta — fixture only; nothing is deployed from ci/tests.
+
+v1|ConfigMap|-|beta

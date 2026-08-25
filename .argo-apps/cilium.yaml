@@ -17,7 +17,11 @@ spec:
     path: cni/cilium
     repoURL: https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps.git
     targetRevision: BRANCHREPLACEMENT
+  # prune is off because losing the primary CNI is a total cluster outage, and an
+  # unreachable cluster cannot be repaired remotely. The cost is that resources
+  # dropped by a version change linger — review each transition for orphans,
+  # webhooks first.
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true

@@ -1,12 +1,46 @@
 name: fluid-k8s-apps
 
+# `master` is deliberately absent. Note that dropping it here does not stop a push to
+# master from building: Actions runs the workflow file belonging to the pushed ref, and
+# master carries its own copy publishing to s3://fluid-artifacts/, which genesis does
+# not read. Retiring that branch is the actual fix.
 on:
   push:
-    branches: [master, production, dev]
+    branches: [production, dev]
+  pull_request:
+    branches: [production, dev]
 
 jobs:
-  build:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-helm@v3
+
+      - name: Install yq
+        run: |
+          command -v yq && exit 0
+          sudo curl -sSL -o /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/download/v4.53.6/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Check the render check itself
+        run: bash ci/tests/run.sh
+
+      - name: Application policy and versioned-directory render
+        run: bash ci/check.sh
+
+  publish:
     name: build
+    needs: validate
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     permissions:
@@ -39,7 +73,6 @@ jobs:
           kubectl kustomize $HOME/.argo-apps > $HOME/artifacts/argo-apps.yaml
           kubectl kustomize $HOME/argocd > $HOME/artifacts/argocd.yaml
           kubectl kustomize $HOME/longhorn > $HOME/artifacts/longhorn.yaml
-          kubectl kustomize $HOME/cni/calico > $HOME/artifacts/calico.yaml
           kubectl kustomize $HOME/cni/cilium > $HOME/artifacts/cilium.yaml
 
           mkdir -p $HOME/artifacts/apps
