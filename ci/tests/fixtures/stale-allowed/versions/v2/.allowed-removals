@@ -1,0 +1,8 @@
+# Declares a removal that no version and no legacy path ever rendered — the state an
+# entry ends up in once the version it was written for is deleted. It exempts nothing,
+# so it is not a hole; it is a record of an orphan review that has stopped being true.
+#
+# Reviewed-by / date / what happens to the orphan:
+#   ghost - fixture only; nothing is deployed from ci/tests.
+
+v1|ConfigMap|-|ghost

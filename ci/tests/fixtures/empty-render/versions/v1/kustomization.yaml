@@ -1,0 +1,6 @@
+# Renders an empty set. kubectl kustomize exits 0 on this, so it is not a render
+# failure, and with no sibling and no legacy path there is nothing to compare it
+# against either — which used to make it report ok.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: []

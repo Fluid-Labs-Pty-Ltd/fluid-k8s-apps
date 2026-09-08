@@ -7,7 +7,12 @@
 #
 # Every Application in .argo-apps/ must appear here and vice versa. The check fails
 # on either kind of gap, so a new Application cannot inherit a prune setting nobody
-# chose.
+# chose. `path` must equal the manifest's spec.source.path — it is what keys the
+# render check, so a stale value here does not fail, it just stops checking that app.
+#
+# Every key below is validated on every run: unknown keys are rejected, because a
+# misspelled one reads as absent. The namespace the helm renderer needs is read from
+# the Application's spec.destination.namespace, not restated here.
 #
 # risk:
 #   data-loss         losing the Application's resources destroys customer data
