@@ -24,12 +24,17 @@ jobs:
       - uses: azure/setup-kubectl@v3
       - uses: azure/setup-helm@v3
 
-      - name: Install yq
+      - name: Install yq v4.53.6
+        env:
+          YQ_VERSION: v4.53.6
+          YQ_SHA256: c5f056448f973ae7d39b5401949648a78f2dc1947d6a8eb65be60d5c504b9385
         run: |
-          command -v yq && exit 0
-          sudo curl -sSL -o /usr/local/bin/yq \
-            https://github.com/mikefarah/yq/releases/download/v4.53.6/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
+          yq --version 2>/dev/null | grep -q "version ${YQ_VERSION}$" && exit 0
+          curl --fail --silent --show-error --location \
+            --output /tmp/yq \
+            "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
+          echo "${YQ_SHA256}  /tmp/yq" | sha256sum --check --strict
+          sudo install -m 0755 /tmp/yq /usr/local/bin/yq
 
       - name: Check the render check itself
         run: bash ci/tests/run.sh

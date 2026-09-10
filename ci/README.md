@@ -10,6 +10,10 @@ bash ci/check.sh        # the checks themselves
 Needs `kubectl`, `yq`, and `helm` for helm-rendered apps. Works from Git Bash on
 Windows.
 
+Helm charts are copied into the check's temporary work directory before
+`helm dependency build` runs, so local checks do not leave `Chart.lock` or
+`charts/` under the source chart.
+
 `ci/tests/run.sh` covers three groups: the checked-in render fixtures, which pin the
 identity format byte for byte against a `.allowed-removals` file; whole-repo cases built
 at run time under `FLUID_REPO_ROOT`, which pin behaviour where the precondition is the
@@ -46,6 +50,8 @@ the same list, without either side needing the other's access.
   the policy value, so a stale one fails nothing — it silently stops checking that
   app. Renaming a directory and updating only the Application manifest is enough to
   do it.
+- **Application manifests use the `.yaml` extension.** A `.yml` file fails explicitly
+  instead of being silently skipped by the policy and prune checks.
 - **No versioned directory renders a subset.** Each `versions/<ver>/` must render at
   least the resources its siblings and the pre-versions path do, and must render at
   least one resource — `kubectl kustomize` exits 0 on a kustomization that resolves to
@@ -60,10 +66,12 @@ of it read as `ok`.
 where `no`, `off` and `0` are plain strings, and one of those would quietly switch a
 comparison back on for an app that had opted out.
 
-The namespace the helm renderer needs is read from the Application's
-`spec.destination.namespace`, which is what ArgoCD renders with. It is deliberately not
+The destination namespace is read from the Application's
+`spec.destination.namespace`, which is what ArgoCD renders with. For Kustomize it is
+applied only as the default for resources that omit `metadata.namespace`; an explicit
+namespace is preserved. For Helm it is passed with `-n`. It is deliberately not
 restated in the policy: it lands in the rendered identities, and a second copy is a
-second thing to keep in step. For the same reason the helm render passes
+second thing to keep in step. For the same reason the Helm render passes
 `--include-crds` and the Application name as the release name — ArgoCD does both, and
 without them the identities compared are not the ones it would prune on.
 

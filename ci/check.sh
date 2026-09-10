@@ -123,8 +123,15 @@ validate_policy() {
 check_prune() {
     load_policy
 
-    local seen=() m=() f base kind name got path destns want ppath
+    local seen=() m=() f yml base kind name got path destns want ppath
     : > "$WORK/index"
+
+    # .yaml is the repository convention. Supporting only it without rejecting .yml
+    # would let an Application use the other extension to bypass every policy check.
+    for yml in "$ROOT"/.argo-apps/*.yml; do
+        [[ -e $yml ]] || break
+        fail "$(basename "$yml"): Application manifests must use the .yaml extension"
+    done
 
     for f in "$ROOT"/.argo-apps/*.yaml; do
         base=$(basename "$f")
@@ -201,23 +208,59 @@ check_prune() {
 
 render() { # dir renderer namespace release
     local dir=$1 renderer=$2 ns=${3:-} release=${4:-release-name}
-    local args=()
+    local args=() chart rendered defaulted explicit overlay wrote=0
 
     case $renderer in
         kustomize)
-            kubectl kustomize "$(native "$dir")"
+            rendered=$(mktemp "$WORK/kustomize-render.XXXXXX")
+            kubectl kustomize "$(native "$dir")" > "$rendered" || return 1
+
+            # ArgoCD treats spec.destination.namespace as a default: it fills an
+            # omitted namespace on namespaced resources without overriding an explicit
+            # one. Let Kustomize's namespace transformer determine resource scope for
+            # only the documents which need that default; applying it to the complete
+            # render would overwrite intentionally different namespaces.
+            if [[ -z $ns ]]; then
+                cat "$rendered"
+                return 0
+            fi
+
+            overlay=$(mktemp -d "$WORK/kustomize-namespace.XXXXXX")
+            defaulted=$overlay/defaulted.yaml
+            explicit=$overlay/explicit.yaml
+            yq 'select(.kind != null and .metadata.namespace == null)' \
+                "$(native "$rendered")" > "$defaulted" || return 1
+            yq 'select(.kind != null and .metadata.namespace != null)' \
+                "$(native "$rendered")" > "$explicit" || return 1
+
+            if [[ -s $defaulted ]]; then
+                printf '%s\n' \
+                    'apiVersion: kustomize.config.k8s.io/v1beta1' \
+                    'kind: Kustomization' \
+                    "namespace: $ns" \
+                    'resources:' \
+                    '  - defaulted.yaml' > "$overlay/kustomization.yaml"
+                kubectl kustomize "$(native "$overlay")" || return 1
+                wrote=1
+            fi
+            if [[ -s $explicit ]]; then
+                [[ $wrote -eq 0 ]] || printf '%s\n' '---'
+                cat "$explicit"
+            fi
             ;;
         helm)
             # Chart.yaml declares a remote dependency and charts/ is untracked, so
-            # helm template on a fresh checkout fails without this. Production's
-            # pipeline already does it.
-            helm dependency build "$(native "$dir")" >/dev/null || return 1
-            [[ -f $dir/values.yaml ]] && args+=(-f "$(native "$dir/values.yaml")")
+            # helm template on a fresh checkout fails without this. Build in a copy so
+            # a local check cannot leave Chart.lock or charts/*.tgz in the source tree.
+            chart=$(mktemp -d "$WORK/helm-chart.XXXXXX")
+            cp -R "$dir"/. "$chart"/ || return 1
+            helm dependency build "$(native "$chart")" >/dev/null || return 1
+            [[ -f $chart/values.yaml ]] && args+=(-f "$(native "$chart/values.yaml")")
             [[ -n $ns ]] && args+=(-n "$ns")
             # ArgoCD includes CRDs unless skipCrds is set, and uses the Application name
             # as the release name. Without both, the identities compared here are not
             # the ones ArgoCD would prune on.
-            helm template "$release" "$(native "$dir")" --include-crds ${args[@]+"${args[@]}"}
+            helm template "$release" "$(native "$chart")" --include-crds ${args[@]+"${args[@]}"}
             ;;
         *)
             echo "error: unknown renderer '$renderer' for $dir" >&2

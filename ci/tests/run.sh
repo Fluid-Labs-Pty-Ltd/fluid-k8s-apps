@@ -92,6 +92,55 @@ render_case 1 empty-versions    "a versions/ directory holding no versions fails
 render_case 1 empty-render      "a version rendering nothing fails" \
     "FAIL  $FIXTURES/empty-render/versions/v1 renders no resources"
 
+# ArgoCD supplies spec.destination.namespace only as the default for namespaced
+# resources which omit metadata.namespace. A version that makes that same namespace
+# explicit is therefore the same resource, not a remove-and-add pair.
+D=$TMP/kustomize-default-namespace
+mkdir -p "$D/versions/v1" "$D/versions/v2"
+cat > "$D/versions/v1/kustomization.yaml" <<'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - configmap.yaml
+EOF
+cat > "$D/versions/v1/configmap.yaml" <<'EOF'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+EOF
+cat > "$D/versions/v2/kustomization.yaml" <<'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - configmap.yaml
+EOF
+cat > "$D/versions/v2/configmap.yaml" <<'EOF'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: kube-system
+EOF
+out=$(bash "$CI/check.sh" render "$D" kustomize false kube-system app 2>&1)
+status=$?
+check 0 "an omitted namespace equals the Application destination namespace" \
+    "$out" "$status" \
+    "ok    $D/versions/v1" \
+    "ok    $D/versions/v2"
+
+# The destination namespace is a default, not an override. An explicitly different
+# namespace must remain a different resource identity.
+sed 's/namespace: kube-system/namespace: other/' \
+    "$D/versions/v2/configmap.yaml" > "$D/versions/v2/configmap-other.yaml"
+mv "$D/versions/v2/configmap-other.yaml" "$D/versions/v2/configmap.yaml"
+out=$(bash "$CI/check.sh" render "$D" kustomize false kube-system app 2>&1)
+status=$?
+check 1 "an explicit non-destination namespace remains distinct" \
+    "$out" "$status" \
+    "v1|ConfigMap|kube-system|config" \
+    "v1|ConfigMap|other|config"
+
 # ------------------------------------------------------ whole-repo cases (built)
 
 # Built here rather than checked in: these pin behaviour, not a byte format, and the
@@ -188,6 +237,34 @@ app_manifest "$R" app app
 printf 'apiVersion: v1\nkind: Application\nmetadata:\n\tname: broken\n' > "$R/.argo-apps/broken.yaml"
 repo_case 2 "$R" "a manifest yq cannot parse exits 2, not 1" \
     "error: broken.yaml: yq could not read it"
+
+# The repository convention is .yaml. Silently ignoring .yml would let an Application
+# bypass its policy, prune and source-path checks.
+R=$(repo yml-manifest)
+cat > "$R/ci/app-policy.yaml" <<'EOF'
+version: 1
+applications:
+  app:
+    path: app
+    risk: low
+    prune: true
+    rationale: fixture
+EOF
+app_manifest "$R" app app
+cat > "$R/.argo-apps/unvalidated.yml" <<'EOF'
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: unvalidated
+spec:
+  source:
+    path: unvalidated
+  syncPolicy:
+    automated:
+      prune: false
+EOF
+repo_case 1 "$R" ".yml Application manifests are rejected rather than skipped" \
+    "FAIL  unvalidated.yml: Application manifests must use the .yaml extension"
 
 # No app in these has a versions/ directory — the state the real repo is in, and the
 # state in which none of the schema was validated.
@@ -336,6 +413,13 @@ check 0 "helm dependency build runs before template" "$(cat "$TMP/helm.log")" 0 
     "dependency build"
 check 0 "helm render passes --include-crds, -n and the release name" "$(cat "$TMP/helm.log")" 0 \
     "template cilium" "--include-crds" "-n kube-system"
+
+if [[ -e $D/Chart.lock || -d $D/charts ]]; then
+    report fail "helm dependency build leaves the source chart untouched" \
+        "generated dependency files were left under $D"
+else
+    report ok "helm dependency build leaves the source chart untouched" ""
+fi
 
 # CRDs are part of what ArgoCD applies, so a version that stops shipping one is a subset.
 D=$TMP/helm-crds

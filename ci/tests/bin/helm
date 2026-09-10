@@ -10,7 +10,14 @@
 
 echo "$*" >> "${HELM_LOG:-/dev/null}"
 
-[[ ${1:-} == dependency ]] && exit 0
+if [[ ${1:-} == dependency ]]; then
+    chart=${3:-}
+    command -v cygpath >/dev/null 2>&1 && chart=$(cygpath -u "$chart")
+    mkdir -p "$chart/charts"
+    : > "$chart/Chart.lock"
+    : > "$chart/charts/dependency.tgz"
+    exit 0
+fi
 [[ ${1:-} == template ]] || exit 0
 
 # helm template <release> <chart> [flags]
