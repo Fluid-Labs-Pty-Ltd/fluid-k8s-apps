@@ -1,0 +1,137 @@
+# Application policy for fluid-k8s-apps.
+#
+# One auditable place classifying every ArgoCD Application in .argo-apps/.
+# CI asserts each Application's manifest against this file (ci/check.sh), and the
+# fluid-cloud version registry seeds from the same list — so the classification is
+# stated once and neither side needs the other's access.
+#
+# Every Application in .argo-apps/ must appear here and vice versa. The check fails
+# on either kind of gap, so a new Application cannot inherit a prune setting nobody
+# chose. `path` must equal the manifest's spec.source.path — it is what keys the
+# render check, so a stale value here does not fail, it just stops checking that app.
+#
+# Every key below is validated on every run: unknown keys are rejected, because a
+# misspelled one reads as absent. The namespace the helm renderer needs is read from
+# the Application's spec.destination.namespace, not restated here.
+#
+# risk:
+#   data-loss         losing the Application's resources destroys customer data
+#   outage            the cluster stops serving, and may be unreachable to repair
+#   outage-recovery   the channel remediation itself routes through
+#   degraded          capability is lost, workloads keep running
+#   low               replaceable by a resync with no user-visible effect
+#
+# review: pending   marks a classification that still needs a decision. The value
+#                   below is what CI enforces today, not a settled position.
+
+version: 1
+
+applications:
+  kubevirt:
+    path: kubevirt
+    renderer: kustomize
+    risk: data-loss
+    prune: false
+    rationale: >-
+      A versioned directory rendering fewer resources takes the operator and the CRs
+      with it, and therefore every VM. CDI ships from this same directory, so an
+      in-flight DataVolume import goes too.
+
+  longhorn:
+    path: longhorn
+    renderer: kustomize
+    risk: data-loss
+    prune: false
+    rationale: Persistent volumes.
+
+  fluid-tunnel:
+    path: fluid-tunnel
+    renderer: kustomize
+    risk: outage-recovery
+    prune: false
+    rationale: >-
+      Every remediation in FS-010 routes through the tunnel — maestro reads,
+      cordon/drain, ArgoCD patching. Prune it and what broke can no longer be
+      reached to be fixed.
+
+  cilium:
+    path: cni/cilium
+    renderer: helm
+    risk: outage
+    prune: false
+    rationale: >-
+      Primary CNI. Total cluster outage, and unreachable to repair.
+
+  cockroach-operator:
+    path: cockroach-operator
+    renderer: kustomize
+    risk: data-loss
+    prune: true
+    review: pending
+    rationale: >-
+      Nested-cluster datastore. Second tier — the risk reads like data-loss, so this
+      likely becomes false; not yet assessed.
+
+  metallb:
+    path: metallb
+    renderer: kustomize
+    risk: outage
+    prune: true
+    review: pending
+    rationale: >-
+      LoadBalancer addresses. Second tier. Its validating webhook is the one genesis
+      already blocks on, so it is the clearest case for an orphan review before any
+      version transition.
+
+  contour:
+    path: contour
+    renderer: kustomize
+    risk: outage
+    prune: true
+    review: pending
+    rationale: Ingress. Second tier.
+
+  argocd:
+    path: argocd
+    renderer: kustomize
+    risk: outage-recovery
+    prune: true
+    review: pending
+    rationale: >-
+      Pruning this removes the thing that reconciles everything else, including
+      itself. Not yet assessed.
+
+  cluster-network-addons:
+    path: cluster-network-addons
+    renderer: kustomize
+    risk: outage
+    prune: true
+    review: pending
+    rationale: >-
+      Supplies Multus, the secondary CNI carrying VM layer-2. Losing it is silent
+      until a VM needs its second interface.
+
+  fluid-system:
+    path: fluid-system
+    renderer: kustomize
+    risk: degraded
+    prune: true
+    rationale: >-
+      Will carry the fluid-agent credential DaemonSet. Losing it costs managed
+      upgrade capability — a node reports a failed credential check and the arm
+      lapses — rather than causing an outage. Recorded as a decision rather than
+      left as a default.
+
+  kube-ingress:
+    path: kube-ingress
+    renderer: kustomize
+    risk: low
+    prune: true
+    rationale: Ingress definitions; recreated by a resync.
+
+  metrics-server:
+    path: metrics-server
+    renderer: kustomize
+    risk: low
+    prune: true
+    rationale: Metrics only. No workload depends on it to keep running.

@@ -17,9 +17,12 @@ spec:
     path: longhorn
     repoURL: "https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps"
     targetRevision: BRANCHREPLACEMENT
+  # prune is off because what it would delete is persistent volumes. The cost is that
+  # resources dropped by a version change linger — review each transition for
+  # orphans, webhooks first.
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
     syncOptions:
       - CreateNamespace=true

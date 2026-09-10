@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# Stands in for helm so the helm render path is testable without network or a real
+# chart. Records every invocation in $HELM_LOG and renders one ConfigMap per name in the
+# chart directory's .stub file, plus one per name in .stub-crds when --include-crds is
+# passed. The namespace it stamps comes from the -n it was given, so a missing -n shows
+# up as a changed identity rather than only as a missing log line.
+#
+# ci/tests/run.sh puts this ahead of the real helm on PATH, for the helm cases only.
+
+echo "$*" >> "${HELM_LOG:-/dev/null}"
+
+if [[ ${1:-} == dependency ]]; then
+    chart=${3:-}
+    command -v cygpath >/dev/null 2>&1 && chart=$(cygpath -u "$chart")
+    mkdir -p "$chart/charts"
+    : > "$chart/Chart.lock"
+    : > "$chart/charts/dependency.tgz"
+    exit 0
+fi
+[[ ${1:-} == template ]] || exit 0
+
+# helm template <release> <chart> [flags]
+chart=${3:-}
+ns=""
+crds=0
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -n|--namespace) ns=${2:-}; shift ;;
+        --include-crds) crds=1 ;;
+    esac
+    shift
+done
+
+command -v cygpath >/dev/null 2>&1 && chart=$(cygpath -u "$chart")
+
+emit() { # name
+    printf -- '---\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: %s\n' "$1"
+    [[ -n $ns ]] && printf '  namespace: %s\n' "$ns"
+}
+
+for n in $(cat "$chart/.stub" 2>/dev/null); do emit "$n"; done
+[[ $crds -eq 1 ]] && for n in $(cat "$chart/.stub-crds" 2>/dev/null); do emit "$n"; done
+
+exit 0

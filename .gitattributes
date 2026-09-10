@@ -1,0 +1,12 @@
+# check.sh compares the lines of .allowed-removals against identities rendered by
+# kubectl kustomize, which are always LF. On a core.autocrlf=true clone a CRLF copy
+# leaves a \r on every declared identity, none of them match, and each is reported as
+# undeclared — with nothing in the message to say why. check.sh strips \r anyway; this
+# keeps the situation from arising in the first place.
+#
+# Deliberately narrow. A repo-wide `* text=auto` would change the working-copy line
+# endings of every file for every Windows clone, which is well outside what this
+# change is for.
+*.sh              text eol=lf
+.allowed-removals text eol=lf
+ci/tests/bin/*    text eol=lf
