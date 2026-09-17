@@ -141,6 +141,34 @@ check 1 "an explicit non-destination namespace remains distinct" \
     "v1|ConfigMap|kube-system|config" \
     "v1|ConfigMap|other|config"
 
+# Namespace resources are cluster-scoped. Sending them through Kustomize's namespace
+# transformer renames them instead of defaulting metadata.namespace, so two distinct
+# Namespaces would be renamed to the same destination namespace and collide.
+D=$TMP/kustomize-multiple-namespaces
+mkdir -p "$D/versions/v1"
+cat > "$D/versions/v1/kustomization.yaml" <<'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespaces.yaml
+EOF
+cat > "$D/versions/v1/namespaces.yaml" <<'EOF'
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cdi
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubevirt
+EOF
+out=$(bash "$CI/check.sh" render "$D" kustomize false kubevirt app 2>&1)
+status=$?
+check 0 "multiple Namespace resources are not renamed to the destination namespace" \
+    "$out" "$status" \
+    "ok    $D/versions/v1"
+
 # ------------------------------------------------------ whole-repo cases (built)
 
 # Built here rather than checked in: these pin behaviour, not a byte format, and the

@@ -217,9 +217,10 @@ render() { # dir renderer namespace release
 
             # ArgoCD treats spec.destination.namespace as a default: it fills an
             # omitted namespace on namespaced resources without overriding an explicit
-            # one. Let Kustomize's namespace transformer determine resource scope for
-            # only the documents which need that default; applying it to the complete
-            # render would overwrite intentionally different namespaces.
+            # one. Let Kustomize's namespace transformer determine resource scope, but
+            # keep Namespace objects out because the transformer renames them. Applying
+            # it to the complete render would overwrite intentionally different
+            # namespaces.
             if [[ -z $ns ]]; then
                 cat "$rendered"
                 return 0
@@ -228,9 +229,9 @@ render() { # dir renderer namespace release
             overlay=$(mktemp -d "$WORK/kustomize-namespace.XXXXXX")
             defaulted=$overlay/defaulted.yaml
             explicit=$overlay/explicit.yaml
-            yq 'select(.kind != null and .metadata.namespace == null)' \
+            yq 'select(.kind != null and .metadata.namespace == null and .kind != "Namespace")' \
                 "$(native "$rendered")" > "$defaulted" || return 1
-            yq 'select(.kind != null and .metadata.namespace != null)' \
+            yq 'select(.kind != null and (.metadata.namespace != null or .kind == "Namespace"))' \
                 "$(native "$rendered")" > "$explicit" || return 1
 
             if [[ -s $defaulted ]]; then

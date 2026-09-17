@@ -16,7 +16,7 @@ spec:
   source:
     helm:
       valueFiles:
-        - values.yaml
+      - values.yaml
     path: cni/cilium
     repoURL: https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps.git
     targetRevision: BRANCHREPLACEMENT

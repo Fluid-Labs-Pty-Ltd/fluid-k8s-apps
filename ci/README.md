@@ -68,12 +68,18 @@ comparison back on for an app that had opted out.
 
 The destination namespace is read from the Application's
 `spec.destination.namespace`, which is what ArgoCD renders with. For Kustomize it is
-applied only as the default for resources that omit `metadata.namespace`; an explicit
-namespace is preserved. For Helm it is passed with `-n`. It is deliberately not
-restated in the policy: it lands in the rendered identities, and a second copy is a
-second thing to keep in step. For the same reason the Helm render passes
-`--include-crds` and the Application name as the release name — ArgoCD does both, and
-without them the identities compared are not the ones it would prune on.
+applied through the namespace transformer to resources that omit
+`metadata.namespace`, while an explicit namespace and `Namespace` objects are
+preserved. The transformer leaves built-in cluster-scoped kinds unchanged, but it
+cannot use ArgoCD's live API discovery to identify the scope of every custom resource.
+A cluster-scoped custom resource unknown to Kustomize may therefore appear with the
+destination namespace in its computed identity. Both sides of a comparison are
+rendered the same way, so this limitation does not change the subset verdict, but that
+identity is not the exact one ArgoCD tracks. For Helm the destination namespace is
+passed with `-n`. It is deliberately not restated in the policy: it lands in the
+rendered identities, and a second copy is a second thing to keep in step. For the same
+reason the Helm render passes `--include-crds` and the Application name as the release
+name.
 
 An entry marked `review: pending` records a classification nobody has decided yet. The
 value there is what CI enforces today, not a settled position.
@@ -97,7 +103,10 @@ identity in exactly the form to paste into that version's `.allowed-removals`:
 apiVersion|kind|namespace|name
 ```
 
-Use `-` for the namespace when the resource is cluster-scoped or unset.
+Copy the identity printed by the check exactly. `-` means the namespace is unset and is
+normally used for built-in cluster-scoped resources. A cluster-scoped custom resource
+that Kustomize cannot identify may instead show the destination namespace, as described
+above.
 
 This fires in **two** directions, and the second one catches people out:
 
