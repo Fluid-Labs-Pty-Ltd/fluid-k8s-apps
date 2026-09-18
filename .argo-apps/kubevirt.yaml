@@ -17,9 +17,14 @@ spec:
     path: kubevirt
     repoURL: "https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps"
     targetRevision: BRANCHREPLACEMENT
+  # prune is off because a source path rendering fewer resources than the live set
+  # would take the operator and the CRs with it, and therefore every VM. CDI ships
+  # from this same directory, so an in-flight DataVolume import would go too. The
+  # cost is that resources dropped by a version change linger — review each
+  # transition for orphans, webhooks first.
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
     syncOptions:
       - CreateNamespace=true

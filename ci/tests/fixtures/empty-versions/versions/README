@@ -1,0 +1,6 @@
+Fixture: a versions/ directory holding no version directories. Git does not track empty
+directories, so this file is what keeps versions/ present in a checkout — it is not a
+version itself, which is exactly the state under test.
+
+check.sh used to report nothing at all here and exit 0, while still counting the app as
+having been render-checked.
