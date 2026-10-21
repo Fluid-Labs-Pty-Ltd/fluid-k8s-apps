@@ -1,3 +1,5 @@
+# Pods mount local.json with subPath and never reload it: when changing it, bump
+# fluidhq.io/config-revision in maestro-deployment.yaml so the sync restarts maestro.
 apiVersion: v1
 kind: ConfigMap
 metadata:
