@@ -13,26 +13,8 @@ data:
         "netris-acl": false,
         "netris-nat": false
       },
-      "network": {
-        "vlanType": "basic"
-      },
-      "redis": {
-        "isCluster": false,
-        "node": {
-            "host": "redis-cluster-0.redis-cluster.fluid-system.svc.cluster.local",
-            "port": 6379
-          }
-      },
       "database": {
         "url": "mongo-0.mongo.fluid-system.svc.cluster.local:27017"
-      },
-      "Xcloud": {
-        "Urls": {
-          "BaseUrl": "http://netris-controller-app.netris-controller.svc.cluster.local"
-        },
-        "Username": "netris",
-        "Password": "newNet0ps",
-        "auth_scheme_id": 1
       },
       "oauth": {
         "jwksUrl": ["https://cloud-dev.fluidhq.io/api/fluid/.well_known/jwks.json"],
