@@ -4,6 +4,7 @@ resources:
   - maestro
   - fluid-sluice
   - fluid-etcd-backup
+  - fluid-agent-credential
   - namespace.yaml
 #  - mongo
 #  - nad-syncer
