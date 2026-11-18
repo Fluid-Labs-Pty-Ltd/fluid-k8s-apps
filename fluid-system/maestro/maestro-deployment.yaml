@@ -19,6 +19,9 @@ spec:
         apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
         seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
         apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+        # local.json is mounted with subPath, so running pods never see ConfigMap edits.
+        # Bump this whenever maestro-configmap.yaml changes so the sync rolls the pods.
+        fluidhq.io/config-revision: "1"
     spec:
       # runtimeClassName: kata-qemu
       securityContext:
