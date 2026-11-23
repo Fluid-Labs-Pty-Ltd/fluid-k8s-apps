@@ -25,7 +25,7 @@ spec:
         fsGroup: 65535
       containers:
         - name: fluid-etcd-backup-operator
-          image: australia-southeast2-docker.pkg.dev/fluidhq/public-dev/fluid-etcd-backup-operator:87e2a76
+          image: australia-southeast2-docker.pkg.dev/fluidhq/public-dev/fluid-etcd-backup-operator:b1a1a07
           imagePullPolicy: IfNotPresent
           env:
             - name: RUST_LOG
@@ -35,7 +35,7 @@ spec:
             - name: UPLOAD_IMAGE_REPOSITORY
               value: australia-southeast2-docker.pkg.dev/fluidhq/public-dev/fluid-etcd-upload-job
             - name: UPLOAD_IMAGE_TAG
-              value: "87e2a76"
+              value: "b1a1a07"
             - name: MAX_ATTEMPTS
               value: "3"
           securityContext:
