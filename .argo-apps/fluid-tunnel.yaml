@@ -17,9 +17,13 @@ spec:
     path: fluid-tunnel
     repoURL: "https://github.com/Fluid-Labs-Pty-Ltd/fluid-k8s-apps"
     targetRevision: BRANCHREPLACEMENT
+  # prune is off because this is the channel remediation itself travels over — maestro
+  # reads, cordon/drain, ArgoCD patching. Prune it and whatever broke can no longer be
+  # reached to be fixed. The cost is that resources dropped by a version change linger
+  # — review each transition for orphans, webhooks first.
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
